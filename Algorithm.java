@@ -9,28 +9,29 @@ class runAlg{
 	public static void main(String args[]){
 		out.println(clsConst.TITLE + clsConst.NEW_LINE);
 
+		// 処理クラスを設定
+		clsProcess[] clsP = new clsProcess[2];
+		clsP[0] = new clsProcess0();  // アルゴリズム用乱数生成
+		clsP[1] = new clsProcess1();  // 線形探索法（リニアサーチ）
+		
 		// パラメータチェック
 		boolean bPara =chkPara(args);
 		if (bPara == false){
-			out.println("0：" + clsConst.PROCESS0_NAME);
-			out.println("1：" + clsConst.PROCESS1_NAME);
-			out.println("2：" + clsConst.PROCESS2_NAME);
-			out.println("3：" + clsConst.PROCESS3_NAME);
+			for (int i = 0; i <= clsConst.MAX_PROCESS; i++){
+				out.println(i + "：" + clsP[i].strPro_Name);
+			}
 			return;
 		}
 
 		// 処理呼び出し
-		clsProcess clsP;
-		switch (args[0]){
-			case "0":
-				clsP = new clsProcess0();
-				break;
-			default:
-				out.println("対応する処理がありません。");
-				return;
+		int iNum = Integer.valueOf(args[0]);
+		if (iNum <= clsConst.MAX_PROCESS){
+			clsP[iNum].args = args;
+			clsP[iNum].subMain();
+		} else {
+			out.println("対応する処理がありません。");
+			return;
 		}
-		clsP.args = args;
-		clsP.subMain();
 	}
 	// パラメータチェック処理
 	private static boolean chkPara(String args[]){
@@ -54,25 +55,37 @@ class runAlg{
 }
 
 /*
-Description：各処理の抽象クラス
+Description：各処理のインターフェース
 */
-abstract class clsProcess{
+interface itfProcess{
+	// メイン処理を実装する
+	void subMain();
+}
+
+/*
+Description：各処理の抽象クラス（各処理のインターフェースを実装）
+*/
+abstract class clsProcess implements itfProcess{
+	// パラメータ受取り用
 	String args[];
-	String strParaGuide = "ガイド未設定";
+	// 処理毎変数初期セット
 	int intParaCnt;
-	String strTitle;
+	String strParaGuide = "ガイド未設定";
+	String strPro_Name = "処理：未実装";
+	String strPro_Desc = "処理概要：未実装";
+	// 定番アルゴリズムで使用する配列数（どの処理でも使うので抽象クラスで設定しておく）
 	ArrayList<Integer> lArray = new ArrayList<Integer>();
 
-	// 処理開始
+	// メイン開始
 	public void subMain(){
 		// タイトル表示
-		out.println(strTitle + clsConst.NEW_LINE);
+		out.println(strPro_Name + clsConst.NEW_LINE + strPro_Desc + clsConst.NEW_LINE);
 
 		// パラメータチェック
 		if (chkPara() == false){
 			return;
 		}
-		// メイン処理
+		// 処理開始
 		// 事前準備としてパラメータで指定された数の配列を作る
 		for(int i = 0 ; i <= Integer.parseInt(args[1]) ; i++) {
 			lArray.add(i);
@@ -80,11 +93,11 @@ abstract class clsProcess{
 		// 配列をシャッフルして、ランダムにする
 		Collections.shuffle(lArray);
 		
-		// 各処理のメイン処理
+		// 各アルゴリズムのメイン処理
 		subMainOriginal();
 	}
 
-	// パラメータチェック
+	// パラメータチェック（第一パラメータチェック）
 	protected boolean chkPara(){
 		boolean bPara;
 		bPara = true;
@@ -108,10 +121,10 @@ abstract class clsProcess{
 		return chkParaOriginal();
 	}
 
-	// パラメータチェック
+	// 各アルゴリズムの個別チェック処理
 	abstract protected boolean chkParaOriginal();
 
-	// メイン処理
+	// 各アルゴリズムのメイン処理
 	abstract protected void subMainOriginal();
 }
 
@@ -121,10 +134,12 @@ Description：処理０ アルゴリズム用乱数生成（乱数を表示さ�
 class clsProcess0 extends clsProcess{
 	// コンストラクタ
 	clsProcess0(){
+		// 処理毎変数セット
 		intParaCnt = 2;
-		strTitle = clsConst.PROCESS0_NAME + clsConst.NEW_LINE + clsConst.PROCESS0_DESC;
 		strParaGuide = "パラメータ１：処理番号（0固定）" + clsConst.NEW_LINE;
 		strParaGuide += "パラメータ２：数値（乱数上限）" + clsConst.NEW_LINE;
+		strPro_Name = "アルゴリズム用乱数生成（乱数を表示させるだけ）";
+		strPro_Desc = "アルゴリズム処理用の乱数を作成する処理（乱数を表示させるだけ）";
 	}
 	// 個別チェック処理
 	protected boolean chkParaOriginal(){
@@ -139,6 +154,36 @@ class clsProcess0 extends clsProcess{
 	protected void subMainOriginal(){
 		// シャッフルした結果を表示させる
 		System.out.println(lArray);
+	}
+}
+
+/*
+Description：処理１ 未実装：線形探索法（リニアサーチ）
+*/
+class clsProcess1 extends clsProcess{
+	// コンストラクタ
+	clsProcess1(){
+		// 処理毎変数セット
+		intParaCnt = 3;
+		strParaGuide = "パラメータ１：処理番号（0固定）" + clsConst.NEW_LINE;
+		strParaGuide += "パラメータ２：数値（乱数上限）" + clsConst.NEW_LINE;
+		strParaGuide += "パラメータ３：数値（検索数値）" + clsConst.NEW_LINE;
+		strPro_Name = "未実装：線形探索法（リニアサーチ）";
+		strPro_Desc = "未実装：線形探索法のプログラム演習";
+	}
+	// 個別チェック処理
+	protected boolean chkParaOriginal(){
+		boolean bPara = true;
+		if (clsCommon.chkNumber(args[1]) == false || clsCommon.chkNumber(args[2]) == false){
+			out.println("パラメータ２、３には数字を指定してください。");
+			bPara = false;
+		}
+		return bPara;
+	}
+	// メイン処理
+	protected void subMainOriginal(){
+		// シャッフルした結果を表示させる
+		System.out.println("未実装");
 	}
 }
 
@@ -164,14 +209,5 @@ final class clsConst{
 	// 全体共通
 	public static final String NEW_LINE = "\r\n";  // 改行
 	public static final String TITLE = "【Java勉強用】定番アルゴリズム実装プログラム";
-
-	// 処理名 & 処理詳細
-	public static final String PROCESS0_NAME = "アルゴリズム用乱数生成（乱数を表示させるだけ）";
-	public static final String PROCESS0_DESC = "アルゴリズム処理用の乱数を作成する処理（乱数を表示させるだけ）";
-	public static final String PROCESS1_NAME = "未実装：線形探索法（リニアサーチ）";
-	public static final String PROCESS1_DESC = "未実装：線形探索法のプログラム演習";
-	public static final String PROCESS2_NAME = "未実装：二分探索法（バイナリサーチ）";
-	public static final String PROCESS2_DESC = "未実装：二分探索法のプログラム演習";
-	public static final String PROCESS3_NAME = "未実装：ハッシュ探索法";
-	public static final String PROCESS3_DESC = "未実装：ハッシュ探索法のプログラム演習";
+	public static final int MAX_PROCESS = 1;
 }
